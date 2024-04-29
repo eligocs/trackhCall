@@ -85,6 +85,18 @@ if(isset($_SESSION['role'])) {
     font-weight: 600;
     margin-top: 0;
 }
+.call_log_cont2s {
+    margin-top: 5px;
+    display: flex;
+    margin: 12px;
+}
+.call_log_cont2 {
+    display: flex;
+    padding: 8px;
+    flex-direction: row-reverse;
+}
+
+
   </style>
   
 </head>
@@ -100,8 +112,7 @@ if(isset($_SESSION['role'])) {
 
             <br> 
 
-             
-
+              
             <?php if(!empty($_SESSION['role']) && $_SESSION['role'] == "customer"){ ?>
                 <div id="calling_div" class="text-center">
                     <div class="call row">
@@ -126,18 +137,10 @@ if(isset($_SESSION['role'])) {
                         <div class="row"> 
                             <div class="col-12 text-center">
                                 <div class="call-box one appendhere">
-                                <div class="call_log_cont">
-                                    <div class="user_phone">
-                                        <h4 class="user_name">Kuldeep</h4>
-                                        <span class=phone_no><i class="fas fa-phone fa-rotate-90"></i> 9882269381</span>
-                                    </div>
-                                    <div class="call_time">
-                                        <span class="time"><i class="far fa-clock"></i> 12:00 pm</span>
-                                    </div>
+                               
                                 </div>
                             </div>
-                        </div>
-                    </div> 
+                        </div> 
                     <?php } ?>
                     <video class="secondary-video" autoplay id="remote-video"></video>
                     <video class="primary-video" autoplay muted id="local-video"></video>

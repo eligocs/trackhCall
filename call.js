@@ -9,7 +9,7 @@ const sessionid = document.querySelector('#userId');
 const userId = sessionid.value;  
 localAudio.style.opacity = 0;
 remoteAudio.style.opacity = 0;
-    
+const ip = "192.168.29.100";
 
 let peer;
 function onCall(otherUserId) { 
@@ -17,35 +17,17 @@ function onCall(otherUserId) {
     var otherUserId = textElement.value;
     startCall(otherUserId);
 }
-function init() {
-    peer = new Peer(userId, {
-        host: '192.168.29.194',
-        port: 9000,
-        path: '/server'
-    });
-
-    peer.on('open', function(peerId) {
-        console.log(`Peer connected with ID: ${peerId}`); 
-        return;
-    });
-    
+function checkAvailable(){
     const existConn = peer.connect("reception"); 
     // Handle when the connection is successfully established
     existConn.on('open', () => {
         console.log('Reception is online'); 
         $('.reception_btn').attr('disabled', false);   
-    });
-    
-    // Handle when the connection is closed
-   
-    
-    // Handle errors
+    }); 
     existConn.on('error', (err) => {
         console.error('Error in connection:', err); 
         // Handle error as needed
-    });
-
-
+    }); 
     const existConn3 = peer.connect("store");
     existConn3.on('open', () => {
         console.log('Store peer is open'); 
@@ -57,6 +39,22 @@ function init() {
         console.log('Kitchen is online'); 
         $('.kitchen_btn').attr('disabled',false);  
     }); 
+}
+
+function init() {
+    peer = new Peer(userId, {
+        host: ip,
+        port: 9000,
+        path: '/server'
+    });
+
+    peer.on('open', function(peerId) {
+        console.log(`Peer connected with ID: ${peerId}`); 
+        return;
+    });
+    
+    checkAvailable()
+   
 
    
     // peer.on('error', function(err) {
@@ -100,8 +98,8 @@ function listen() {
         });
     });
 }
-
 function startCall(otherUserId) {
+    console.log(otherUserId);
     navigator.getUserMedia({
         audio: true,
         video: false
@@ -113,14 +111,26 @@ function startCall(otherUserId) {
         call.on('stream', (remoteStream) => {
             remoteAudio.srcObject = remoteStream;
         });
+
         const dataConnection = peer.connect(otherUserId);
         dataConnection.on('open', () => {
-            var data = {
-                type : "incoming",
-                html : '<div class="call-box" id="inside_call"><div class="icons"><i class="fas fa-phone"></i>&nbsp;' + userId + ' Incoming Call </div><div class="btn_box"><button class="btn btn-success answer-btn" onclick="acceptCall(\'' +userId + '\')">Answer</button>&nbsp;<button class="end-call-btn btn btn-danger" onclick="rejectCall(\'' +userId + '\')">Reject</button></div></div>'
-            }
-            // Use call.peer to get the call ID 
+            const data = {
+                type: "incoming",
+                html: '<div class="call_log_cont"> <div class="user_phone"> <h4 class="user_name">Room</h4> <span class=phone_no> <i class="fas fa-phone fa-rotate-90"></i> '+userId+' </span> </div> <div class="call_time"> <span class="time"><i class="far fa-clock"></i> 12:00 pm</span> </div> <div class="call_log_cont2  "> <button class="btn btn-success answer-btn" onclick="acceptCall('+userId+')">Answer</button> <button class="end-call-btn btn btn-danger" onclick="rejectCall('+userId+')">Reject</button> </div></div> '
+            };
+            console.log(data.html)
+            // Send the data over the data connection
             dataConnection.send(data);
+        });
+        
+        // Handle received data from the data connection
+        dataConnection.on('data', (data) => {
+            // Check if the received data is of type "incoming"
+            if (data.type === "incoming") {
+                // Append the HTML to a container element in the DOM
+                const container = document.getElementById('incomingCallsContainer');
+                container.innerHTML += data.html;
+            }
         });
     });
 }
