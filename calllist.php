@@ -1,6 +1,10 @@
 <?php
 // Start session
 session_start(); 
+if (!isset($_SESSION['role'])) { 
+    header("Location: index.php");
+    exit(); // Stop executing the script
+}
 $userId = ""; 
 if(isset($_SESSION['phone'])) {
     $userId = $_SESSION['phone']; 
@@ -95,22 +99,32 @@ if(isset($_SESSION['role'])) {
     padding: 8px;
     flex-direction: row-reverse;
 }
-
-
+.text-red{
+    color:red;
+}
+.container.mobileon {
+    background: beige;
+    margin: 12px;
+    border: 1px solid #d1d1d1; 
+}
+hr {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    border: 0;
+    border-top: 1px solid #7fcf18;
+}
   </style>
   
 </head>
 <body>
 <input type="hidden" id="userId" value="<?php echo $userId ?? ''; ?>">
 <input type="hidden" id="text-element">
-<div class="container"> 
+<div class="container mobileon"> 
         <div class="text-center">
-            <h1>Hotel Hans : <?php echo !empty($_SESSION['department']) ? ucfirst($_SESSION['department']) : ''; ?></h1>
+            <h3>Hotel Hans : <b><?php echo !empty($_SESSION['department']) ? ucfirst($_SESSION['department']) : ''; ?></b> </h5><br>
             <small><?php echo ucfirst($role); ?> Portal</small>
-        </div>
-
-
-            <br> 
+            <i class="fas fa-sign-out-alt text-red"></i>
+        </div> 
 
               
             <?php if(!empty($_SESSION['role']) && $_SESSION['role'] == "customer"){ ?>
@@ -133,7 +147,8 @@ if(isset($_SESSION['role'])) {
                 <?php } ?>
                 <?php if(!empty($_SESSION['role']) && $_SESSION['role'] == "employee"){ ?>
                 <div id="second_content" class="text-center">
-                    <h1 id="heading2">Call list <span id="dot2"><i class="fa fa-user"></i></span></h1>
+                    <hr>
+                    <h4 id="heading2">Call list <span id="dot2"><i class="fa fa-user"></i></span></h4>
                         <div class="row"> 
                             <div class="col-12 text-center">
                                 <div class="call-box one appendhere">

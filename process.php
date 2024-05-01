@@ -1,7 +1,7 @@
 <?php
 // Start session
 session_start();
-
+    $_SESSION['phone'] = $_POST['phone']; 
 // Check if phone number is submitted
 if(isset($_POST['phone'])) {
     // Store the phone number in a session variable

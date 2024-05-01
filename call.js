@@ -9,7 +9,7 @@ const sessionid = document.querySelector('#userId');
 const userId = sessionid.value;  
 localAudio.style.opacity = 0;
 remoteAudio.style.opacity = 0;
-const ip = "192.168.29.100";
+var ip = "192.168.29.100";
 
 let peer;
 function onCall(otherUserId) { 
@@ -34,14 +34,14 @@ function checkAvailable(){
         $('.store_btn').attr('disabled',false);  
     }); 
 
-    const existConn2 = peer.connect("kitchen");
+    const existConn2 = peer.connect("kithen");
     existConn2.on('open', () => {
         console.log('Kitchen is online'); 
         $('.kitchen_btn').attr('disabled',false);  
     }); 
 }
 
-function init() {
+function init() { 
     peer = new Peer(userId, {
         host: ip,
         port: 9000,
@@ -50,22 +50,24 @@ function init() {
 
     peer.on('open', function(peerId) {
         console.log(`Peer connected with ID: ${peerId}`); 
+        checkAvailable()
         return;
     });
     
-    checkAvailable()
    
 
    
-    // peer.on('error', function(err) {
-    //     console.log(`Peer ID Exists: ${userId}`);
-    //     userId = userId;
-    //     calling_div.style.display = "none";
-    //     heading2.style.display = "block";
-    //     secondContent.style.display = "block";
+    peer.on('error', function(err) {
+        console.log(`Peer ID Exists: ${userId}`);
+        alert(userId+' already loggen in on other device !')
+        window.location.href= "index.php";
+        return;
+        // userId = userId;                                 
+        // heading2.style.display = "block";
+        // secondContent.style.display = "block";
 
-    //     init();
-    // });
+        // init();
+    });
 
     peer.on('connection', (dataConnection) => {
         dataConnection.on('data', (data) => {
@@ -99,7 +101,7 @@ function listen() {
     });
 }
 function startCall(otherUserId) {
-    console.log(otherUserId);
+    checkAvailable()
     navigator.getUserMedia({
         audio: true,
         video: false
